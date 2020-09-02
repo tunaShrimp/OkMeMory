@@ -1,0 +1,103 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body>
+    <h1>그림 기억하기</h1>
+    <!-- 이미지를 담을 테이블 생성 -->
+    <table id="pztable">
+        <tr>
+            <td><img src="" id="pz0"></td>
+            <td><img src="" id="pz1"></td>
+            <td><img src="" id="pz2"></td>
+        </tr>
+        <tr>
+            <td><img src="" id="pz3"></td>
+            <td><img src="" id="pz4"></td>
+            <td><img src="" id="pz5"></td>
+        </tr>
+        <tr>
+            <td><img src="" id="pz6"></td>
+            <td><img src="" id="pz7"></td>
+            <td><img src="" id="pz8"></td>
+        </tr>
+    </table>
+    <div id="quiz"><p></p></div>
+</body>
+<style>
+    body{
+        position: relative;
+    }
+    table {
+        /* border: solid 1px; */
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+
+    /* tr td{
+        border: solid 1px;
+    } */
+
+    #quiz{
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        margin-left: -50%;
+        font-size: 50px;
+        border: solid 1px;
+    }
+</style>
+<script>
+    // 이미지 생성하기
+    var puzzle = ['img/mouse.png', 'img/rabbit.png', 'img/snake.png', 'img/tiger.png'];
+    var check = [0, 0, 0, 0];
+    //console.log(ran);
+    var i = 0;
+   
+    while (i < 9) {
+        var ran = Math.floor(Math.random() * puzzle.length);
+        document.getElementById("pz" + i + "").src = puzzle[ran];
+        check[ran]++;
+        i++;
+        if (check[ran] > 5) {
+            continue;
+        }
+
+        if(i == 9){
+            setTimeout(() => {
+                document.getElementById('pztable').style.visibility="hidden";
+            }, 3000);
+            
+            setTimeout(() => {
+                document.getElementById('quiz').innerHTML = "는 몇마리 입니까?";
+            }, 4500);
+        }
+    }
+
+    //  for(var i=0; i<4; i++) {
+    //      console.log(check[i]);
+    //  }
+
+
+    var controller = Leap.loop(function (frame) {
+        if (frame.hands.length > 0) {
+            var hand = frame.hands[0];
+            var fingers = hand.fingers[0];
+
+            // 손가락 펴진 갯수
+            var extendedFingers = 0;
+            for (var f = 0; f < hand.fingers.length; f++) {
+                var finger = hand.fingers[f];
+                if (finger.extended) extendedFingers++;
+            }
+            //console.table (extendedFingers);
+
+
+        }
+    });
+
+</script>
+
+</html>
