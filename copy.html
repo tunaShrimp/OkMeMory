@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body onload="start()">
+    <h1>그림 기억하기</h1>
+    <!-- 이미지를 담을 테이블 생성 -->
+    <table id="pztable">
+        <tr>
+            <td><img src="" id="pz0"></td>
+            <td><img src="" id="pz1"></td>
+            <td><img src="" id="pz2"></td>
+        </tr>
+        <tr>
+            <td><img src="" id="pz3"></td>
+            <td><img src="" id="pz4"></td>
+            <td><img src="" id="pz5"></td>
+        </tr>
+        <tr>
+            <td><img src="" id="pz6"></td>
+            <td><img src="" id="pz7"></td>
+            <td><img src="" id="pz8"></td>
+        </tr>
+    </table>
+
+    <div id="container">
+        <img src="" id="qz">
+        <span id="quiz"></span>
+        <p id="answer"></p>
+    </div>
+</body>
+<style>
+    body {
+        position: relative;
+    }
+
+    table {
+        /* border: solid 1px; */
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+
+    /* tr td{
+        border: solid 1px;
+    } */
+
+    #container {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        width: 100%;
+        margin-left: -50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #quiz {
+        font-size: 30px;
+    }
+</style>
+<script>
+    // 이미지 생성하기
+    var puzzle = ['img/mouse.png', 'img/rabbit.png', 'img/snake.png', 'img/tiger.png'];
+    function start() {
+
+        var check = [0, 0, 0, 0];
+        //console.log(ran);
+        var i = 0;
+
+        while (i < 9) {
+            var ran = Math.floor(Math.random() * puzzle.length);
+
+            if (check[ran] < 5) {
+                document.getElementById("pz" + i + "").src = puzzle[ran];
+                check[ran]++;
+                i++;
+            }
+
+            if (i == 9) {
+                setTimeout(() => {
+                    document.getElementById('pztable').style.visibility = "hidden";
+                }, 3000);
+
+                setTimeout(() => {
+                    document.getElementById('qz').src = puzzle[ran];
+                    document.getElementById('quiz').innerHTML = "는 몇마리 입니까?";
+                }, 4500);
+
+
+                var leapFinger = setTimeout(leap, 6500, ran, check);
+            }
+        }
+
+        for (var i = 0; i < 4; i++) {
+            console.log(check[i]);
+        }
+    }
+
+    //그림 초기화
+    function imgReset() {
+        for (var i = 0; i < 9; i++) {
+
+            document.getElementById("pz" + i + "").src = "";
+        }
+        document.getElementById('qz').src = "";
+        document.getElementById('quiz').innerHTML = "";
+        document.getElementById('answer').innerHTML = "";
+
+        setTimeout(start, 1000);
+    }
+
+    //leap motion 
+
+    function leap(ran, check) {
+        var count = [0, 0, 0, 0, 0, 0];
+        var controller =
+            Leap.loop(function (frame) {
+                if (frame.hands.length > 0) {
+                    var hand = frame.hands[0];
+                    var fingers = hand.fingers[0];
+
+                    // 손가락 펴진 갯수
+                    var extendedFingers = 0;
+                    for (var f = 0; f < hand.fingers.length; f++) {
+                        var finger = hand.fingers[f];
+                        if (finger.extended) extendedFingers++;
+                    }
+                    console.table(extendedFingers);
+                    count[extendedFingers]++;
+                    //console.log("count : ", count);
+
+                    for (var i = 0; i < count.length; i++) {
+                        if (count[i] > 100 && i == check[ran]) {
+                            document.getElementById('answer').innerHTML = "정답입니다!";
+                            setTimeout(imgReset, 1000);
+
+
+                        } else if (count[i] > 100 && i != check[ran]) {
+                            document.getElementById('answer').innerHTML = "틀렸습니다!";
+                            setTimeout(imgReset, 1000);
+
+                        }
+                    }
+                }
+            });
+    }       
+</script>
+
+</html>
