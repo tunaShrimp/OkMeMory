@@ -1,0 +1,295 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body>
+
+    <div id="pointDiv">
+        <h1>그림 기억하기</h1>
+        <div id="pointSpan">
+            <span><img src="img/empty.png" id="point1"></span><span><img src="img/empty.png" id="point2"></span><span><img src="img/empty.png" id="point3"></span><span><img src="img/empty.png" id="point4"></span><span><img src="img/empty.png" id="point5"></span>
+        </div>
+    </div>
+
+    <!-- 이미지를 담을 테이블 생성 -->
+   
+    <table id="pztable">
+        <tr>
+            <td><img src="" id="pz0"></td>
+            <td><img src="" id="pz1"></td>
+            <td><img src="" id="pz2"></td>
+        </tr>
+        <tr>
+            <td><img src="" id="pz3"></td>
+            <td><img src="" id="pz4"></td>
+            <td><img src="" id="pz5"></td>
+        </tr>
+        <tr>
+            <td><img src="" id="pz6"></td>
+            <td><img src="" id="pz7"></td>
+            <td><img src="" id="pz8"></td>
+        </tr>
+    </table>
+
+    <div id="container">
+        <img src="" id="qz">
+        <span id="quiz"></span>
+    </div>
+    <div id="result">
+
+    </div>
+</body>
+<style>
+    body {
+        position: relative;
+    }
+
+    #pointDiv {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    #pointSpan {
+        position: absolute;
+        top: 10%;
+        right: 5%;
+    }
+
+    #pointSpan img{
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+    }
+    
+    #pztable {
+        /* border: solid 1px; */
+        border-collapse: collapse;
+        margin: 5% auto;
+    }
+
+    /* tr td{
+        border: solid 1px;
+    } */
+
+    #container {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        width: 100%;
+        margin-left: -50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #quiz {
+        font-size: 30px;
+    }
+
+    #result {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        margin-left: -50%;
+        font-size: 50px;
+        text-align: center;
+        visibility: hidden;
+    }
+
+</style>
+<script>
+
+    var game = 0;   // 실행 횟수
+    var startSet = null;
+    var imgSet = null;
+    var questionSet = null;
+    var connSet = null;
+    var quizSet = null;
+    var inspectionSet = null;
+    var resetSet = null;
+    var isPause = false;    // leapmotion switch
+    var resultdiv = document.getElementById("result");
+    var green = 0;  // 정답
+    var red = 0;    // 오답
+    // var controller = new Leap.Controller(); // leapmotion controller
+
+    //실행
+    start();
+
+    function start() {
+        resultdiv.style.visibility = "hidden";
+        game++;
+        console.log("start : ", game);
+        clearTimeout(resetSet);
+        startSet = null;
+
+        if (startSet == null) {
+            startSet = setTimeout(img, 1000);
+        }
+    }
+
+    //이미지 생성
+    function img() {
+        console.log("img : ", game);
+
+        var puzzle = ['img/mouse.png', 'img/rabbit.png', 'img/snake.png', 'img/tiger.png'];
+        var check = [0, 0, 0, 0];
+        var draw = 0;
+        imgSet = null;
+        clearTimeout(startSet);
+
+        while (draw < 9) {
+            var ran = Math.floor(Math.random() * puzzle.length);
+            if (check[ran] < 5) {
+
+                document.getElementById("pz" + draw + "").src = puzzle[ran];
+                check[ran]++;
+                draw++;
+                if (draw == 9) {
+                    document.getElementById('pztable').style.visibility = "visible";
+
+                    if (imgSet == null) {
+                        console.log("cran : ", check[ran]);
+                        imgSet = setTimeout(question, 5000, puzzle[ran], check[ran]);
+                    }
+                }
+            }
+
+        }
+        console.log(check);
+    }
+
+    //문제
+    function question(ran, cran) {
+        console.log("question : ", game);
+        clearTimeout(questionSet);
+        quizSet = null;
+        questionSet = null;
+
+        document.getElementById('pztable').style.visibility = "hidden";
+
+        if (quizSet == null) {
+            quizSet = setTimeout(() => {
+                document.getElementById('qz').src = ran;
+                document.getElementById('quiz').innerHTML = "는 몇 마리 입니까?";
+            }, 1000);
+        }
+
+
+        if (questionSet == null) {
+            questionSet = setTimeout(pass, 4000, cran);
+        }
+    }
+
+    // 검사, 통로?
+    function pass(cran) {
+        console.log("pass : ", game);
+        clearTimeout(questionSet);
+        clearTimeout(quizSet);
+
+        connLeap(cran);
+
+    }
+
+    // leapmotion
+    function connLeap(cran) {
+        console.log("leap cran: ", cran);
+        console.log("connLeap : ", game);
+        isPause = false;
+        connSet = null;
+        var cran2 = cran;
+
+        if (!isPause) {
+            console.log("isPause");
+            var controller = new Leap.Controller();
+            controller.connect();
+
+            controller.on('connect', function () {
+                console.log("controller cran : ", cran2);
+                var count = [0, 0, 0, 0, 0];
+
+                if (connSet == null) {
+                    connSet = setInterval(function () {
+                        var frame = controller.frame();
+                        if (frame.hands.length > 0) {
+                            var hand = frame.hands[0];
+                            var fingers = hand.fingers[0];
+                            var extendedFingers = 0;
+
+                            for (var f = 0; f < hand.fingers.length; f++) {
+                                var finger = hand.fingers[f];
+                                if (finger.extended) extendedFingers++;
+                            }
+
+                            count[extendedFingers - 1]++;
+                            //console.log("extendedFingers : " , extendedFingers);
+                            //console.log("count : ", count);
+
+                            for (var i = 0; i < count.length; i++) {
+                                if (count[i] > 200) {
+                                    count = [0, 0, 0, 0, 0];
+                                    controller.disconnect();
+                                    inspection(i + 1, cran);
+                                }
+                            }
+                        }
+                    }, 10);
+                }
+
+            })
+        }
+    }
+
+    //정답확인
+    function inspection(i, cran) {
+        console.log("inspection : ", game);
+        clearInterval(connSet);
+        // controller.disconnect();
+        isPause = true;
+        inspectionSet = null;
+
+        if (inspectionSet == null) {
+            if (i == cran) {
+                resultdiv.style.visibility = "visible";
+                resultdiv.innerHTML = "정답입니다!";
+                green++;
+                document.getElementById("point"+ game).src = "img/green.png";
+                inspectionSet = setTimeout(reset, 2000);
+            } else {
+                resultdiv.style.visibility = "visible";
+                resultdiv.innerHTML = "틀렸습니다!";
+                red++;
+                document.getElementById("point"+ game).src = "img/red.png";
+                inspectionSet = setTimeout(reset, 2000);
+            }
+        }
+    }
+
+    //초기화
+    function reset() {
+        console.log("reset : ", game);
+        clearTimeout(inspectionSet);
+        resetSet = null;
+
+        document.getElementById('qz').src = "";
+        document.getElementById('quiz').innerHTML = "";
+        resultdiv.innerHTML = "";
+
+        if (resetSet == null) {
+            if (game < 5) {
+                resetSet = setTimeout(start, 2000);
+            } else {
+                document.getElementById('quiz').innerHTML = "ㅅㄱㅅㄱ</br> 정답 : "+ green + "   오답 :" + red;
+            }
+        }
+    }
+
+</script>
+
+</html>
