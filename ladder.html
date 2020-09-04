@@ -1,0 +1,131 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body>
+
+    <div id="pointDiv">
+        <h1>사다리타기</h1>
+        <div id="pointSpan">
+            <span><img src="img/empty.png" id="point1"></span><span><img src="img/empty.png" id="point2"></span><span><img src="img/empty.png" id="point3"></span><span><img src="img/empty.png" id="point4"></span><span><img src="img/empty.png" id="point5"></span>
+        </div>
+    </div>
+
+    <!-- 이미지를 담을 테이블 생성 -->
+    <table id="ladderTb">
+        <tr>
+            <td><img src="img/postOffice.png" id="destination1"></td>
+            <td><img src="img/hospital.png" id="destination2"></td>            
+            <td><img src="img/fireStation.png" id="destination3"></td>
+            <td><img src="img/school.png" id="destination4"></td>
+            <td><img src="img/police.png" id="destination5"></td>
+        </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+        </tr>
+    </table>
+</body>
+<style>
+    body {
+        position: relative;
+    }
+
+    #pointDiv {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+    
+    #ladderTb {
+        border: solid 1px;
+        border-collapse: collapse;
+        margin: 5% auto;
+        text-align: center;
+    }
+
+    #pointSpan {
+        position: absolute;
+        top: 10%;
+        right: 5%;
+    }
+
+    #pointSpan img{
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+    }
+
+    td, tr{
+        border: solid 1px;
+    }
+
+</style>
+<script>
+
+</script>
+
+</html>
