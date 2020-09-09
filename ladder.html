@@ -9,19 +9,26 @@
     <div id="pointDiv">
         <h1>사다리타기</h1>
         <div id="pointSpan">
-            <span><img src="img/empty.png" id="point1"></span><span><img src="img/empty.png" id="point2"></span><span><img src="img/empty.png" id="point3"></span><span><img src="img/empty.png" id="point4"></span><span><img src="img/empty.png" id="point5"></span>
+            <span><img src="img/empty.png" id="point1"></span><span><img src="img/empty.png"
+                    id="point2"></span><span><img src="img/empty.png" id="point3"></span><span><img src="img/empty.png"
+                    id="point4"></span><span><img src="img/empty.png" id="point5"></span>
         </div>
+    </div>
+
+    <div id="container">
+        <span id="destination"></span>
+        <span id="question">을(를) 찾아가세요.</span>
     </div>
 
     <!-- 이미지를 담을 테이블 생성 -->
     <table id="ladderTb">
         <tr>
-            <td><img src="img/postOffice.png" id="destination1"></td>
-            <td><img src="img/hospital.png" id="destination2"></td>            
-            <td><img src="img/fireStation.png" id="destination3"></td>
-            <td><img src="img/school.png" id="destination4"></td>
-            <td><img src="img/police.png" id="destination5"></td>
-        </td>
+            <td><img src="" id="destination0"></td>
+            <td><img src="" id="destination1"></td>
+            <td><img src="" id="destination2"></td>
+            <td><img src="" id="destination3"></td>
+            <td><img src="" id="destination4"></td>
+            </td>
         </tr>
         <tr>
             <td></td>
@@ -80,11 +87,11 @@
             <td></td>
         </tr>
         <tr>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
+            <td><img src = "img/1.png"></td>
+            <td><img src = "img/2.png"></td>
+            <td><img src = "img/3.png"></td>
+            <td><img src = "img/4.png"></td>
+            <td><img src = "img/5.png"></td>
         </tr>
     </table>
 </body>
@@ -93,17 +100,31 @@
         position: relative;
     }
 
+    #container {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        margin-left: -50%;
+        width: 100%;
+        text-align: center;
+    }
+
+    #question {
+        font-size: 30px;
+    }
+
     #pointDiv {
         position: fixed;
         top: 0;
         width: 100%;
     }
-    
+
     #ladderTb {
-        border: solid 1px;
+        visibility: hidden;
         border-collapse: collapse;
         margin: 5% auto;
         text-align: center;
+        width: 1000px;
     }
 
     #pointSpan {
@@ -112,19 +133,135 @@
         right: 5%;
     }
 
-    #pointSpan img{
+    #pointSpan img {
         max-width: 100px;
         max-height: 100px;
         width: auto;
         height: auto;
     }
 
-    td, tr{
-        border: solid 1px;
+    td,
+    tr {
+        padding: 0;
     }
 
+    td {
+        width: 200px;
+    }
 </style>
 <script>
+    // 시작
+    start();
+    //ladderGame();
+    // 문제 출력
+    function start() {
+        var imgStr = ["은행", "소방서", "병원", "도서관", "박물관", "경찰서", "우체국", "학교"];
+
+        var destination = document.getElementById('destination');
+        destination.style.fontSize = "50px";
+        destination.style.fontWeight = "bold";
+
+        var ran = Math.floor(Math.random() * imgStr.length);
+
+        switch(ran)
+        {
+            case 0:
+                destination.style.color = "#DAA520";
+                break;
+            case 1:
+                destination.style.color = "#B22222";
+                break;
+            case 2: 
+                destination.style.color = "#006400";
+                break;
+            case 3: 
+                destination.style.color = "#8B4513";
+                break;
+            case 4:
+                destination.style.color = "#191970";
+                break;
+            case 5:
+                destination.style.color = "#4682B4";
+                break;
+            case 6:
+                destination.style.color = "#FF0000";
+                break;
+            case 7:
+                destination.style.color = "#483D8B";
+                break;
+        }
+
+        destination.innerHTML = imgStr[ran];
+
+        setTimeout(() => {
+            document.getElementById('container').style.visibility = "hidden";
+        }, 2000);
+
+        setTimeout(() => {
+            ladderGame(ran);
+            document.getElementById('ladderTb').style.visibility = "visible";
+        }, 4000);
+    }
+
+    // 사다리 Game img 생성
+    function ladderGame(ran) {
+        var building = ["img/bank.png", "img/fireStation.png", "img/hospital.png", "img/library.png", "img/museum.png", "img/police.png", "img/postOffice.png", "img/school.png"];
+
+        // 0~6까지 중복되지 않는 랜덤 숫자 4개 생성
+        var array = [];
+        var num = 0;
+        array.push(ran);
+
+        while (num < 4) {
+            var r = Math.floor(Math.random() * building.length);
+            if (!sameNum(r)) {
+                array.push(r);
+                num++;
+            }
+        }
+
+        // 중복검사
+        function sameNum(r) {
+            for (var i = 0; i < array.length; i++) {
+                if (r == array[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        //console.log(array);
+
+        // 이미지 랜덤 생성
+        for (var i = 0; i < array.length; i++) {
+            document.getElementById("destination" + i + "").src = building[array[i]];
+        }
+
+        // 사다리 생성
+        var ladderTb = document.getElementById('ladderTb');
+        var lineImg = ['a.png', 'straight.png', 'eo.png'];
+        var temp = Array(Array(), Array(), Array(), Array(), Array());
+
+        for (var j = 0; j < 5; j++) {
+            for (var i = 1; i <9; i++) {
+                if (j==0){
+                    var ran = Math.floor(Math.random() * (lineImg.length - 1));
+                    ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[ran] + "'>";
+                    temp[j][i]= ran;
+                } else if (temp[j-1][i] == 0){
+                    ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[2] + "'>";
+                    temp[j][i]= 2;
+                } else {
+                    var ran = Math.floor(Math.random() * (lineImg.length - 1));
+                    ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[ran] + "'>";
+                    temp[j][i]= ran;
+                }
+
+                if(j == 4 && temp[j][i]==0){
+                    ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[1] + "'>";
+                }
+            }
+        }
+    }
 
 </script>
 
