@@ -23,11 +23,25 @@
     <!-- 이미지를 담을 테이블 생성 -->
     <table id="ladderTb">
         <tr>
-            <td><img src="" id="destination0"></td>
-            <td><img src="" id="destination1"></td>
-            <td><img src="" id="destination2"></td>
-            <td><img src="" id="destination3"></td>
-            <td><img src="" id="destination4"></td>
+            <td style="position: relative">
+                <img src="" id="destination0">
+                <img src="img/answer.png" id="answer0" class="check">
+            </td>
+            <td style="position: relative;">
+                <img src="" id="destination1">
+                <img src="img/answer.png" id="answer1" class="check">
+            </td>
+            <td style="position: relative;">
+                <img src="" id="destination2">
+                <img src="img/answer.png" id="answer2" class="check">
+            </td>
+            <td style="position: relative;">
+                <img src="" id="destination3">
+                <img src="img/answer.png" id="answer3" class="check">
+            </td>
+            <td style="position: relative;">
+                <img src="" id="destination4">
+                <img src="img/answer.png" id="answer4" class="check">
             </td>
         </tr>
         <tr>
@@ -87,11 +101,11 @@
             <td></td>
         </tr>
         <tr>
-            <td><img src = "img/1.png"></td>
-            <td><img src = "img/2.png"></td>
-            <td><img src = "img/3.png"></td>
-            <td><img src = "img/4.png"></td>
-            <td><img src = "img/5.png"></td>
+            <td><img src="" id="btn1"></td>
+            <td><img src="" id="btn2"></td>
+            <td><img src="" id="btn3"></td>
+            <td><img src="" id="btn4"></td>
+            <td><img src="" id="btn5"></td>
         </tr>
     </table>
 </body>
@@ -109,6 +123,11 @@
         text-align: center;
     }
 
+    .check {
+        position: absolute;
+        border: solid 1px;
+    }
+
     #question {
         font-size: 30px;
     }
@@ -124,7 +143,8 @@
         border-collapse: collapse;
         margin: 5% auto;
         text-align: center;
-        width: 1000px;
+        /* width: 1000px; */
+        /* position: relative; */
     }
 
     #pointSpan {
@@ -143,6 +163,7 @@
     td,
     tr {
         padding: 0;
+        border: solid 1px;
     }
 
     td {
@@ -152,7 +173,13 @@
 <script>
     // 시작
     start();
-    //ladderGame();
+
+    var isPause = false;
+    var connSet = null;
+    var ladderTb = document.getElementById('ladderTb');
+    var temp = Array(Array(), Array(), Array(), Array(), Array());
+    var gameCnt = 3;
+
     // 문제 출력
     function start() {
         var imgStr = ["은행", "소방서", "병원", "도서관", "박물관", "경찰서", "우체국", "학교"];
@@ -160,21 +187,22 @@
         var destination = document.getElementById('destination');
         destination.style.fontSize = "50px";
         destination.style.fontWeight = "bold";
+        document.getElementById('container').style.visibility = "visible";
+        document.getElementById('ladderTb').style.visibility = "hidden";
 
         var ran = Math.floor(Math.random() * imgStr.length);
 
-        switch(ran)
-        {
+        switch (ran) {
             case 0:
                 destination.style.color = "#DAA520";
                 break;
             case 1:
                 destination.style.color = "#B22222";
                 break;
-            case 2: 
+            case 2:
                 destination.style.color = "#006400";
                 break;
-            case 3: 
+            case 3:
                 destination.style.color = "#8B4513";
                 break;
             case 4:
@@ -193,20 +221,27 @@
 
         destination.innerHTML = imgStr[ran];
 
+        // 번호 버튼/정답표시 이미지 초기화
+        for (var i = 1; i < 6; i++) {
+            document.getElementById("btn" + i + "").src = "img/" + i + ".png";
+            //document.getElementById("answer"+(i-1)+"").src = "";
+        }
+
         setTimeout(() => {
             document.getElementById('container').style.visibility = "hidden";
         }, 2000);
 
         setTimeout(() => {
-            ladderGame(ran);
+            ladderGame(ran, imgStr, imgStr[ran]);
             document.getElementById('ladderTb').style.visibility = "visible";
         }, 4000);
     }
 
     // 사다리 Game img 생성
-    function ladderGame(ran) {
+    function ladderGame(ran, imgStr, answer) {
         var building = ["img/bank.png", "img/fireStation.png", "img/hospital.png", "img/library.png", "img/museum.png", "img/police.png", "img/postOffice.png", "img/school.png"];
 
+        //console.log("ladderGame : ", answer);
         // 0~6까지 중복되지 않는 랜덤 숫자 4개 생성
         var array = [];
         var num = 0;
@@ -229,37 +264,153 @@
             }
             return false;
         }
-        //console.log(array);
+        //console.log("array : ", array);
+        shuffle(array);
+
+        // 이미지 순서 섞기
+        function shuffle(a) {
+            var i, j, k;
+
+            for (i = a.length; i; i--) {
+                j = Math.floor(Math.random() * i);
+                k = a[i - 1];
+                a[i - 1] = a[j];
+                a[j] = k;
+            }
+        }
 
         // 이미지 랜덤 생성
         for (var i = 0; i < array.length; i++) {
             document.getElementById("destination" + i + "").src = building[array[i]];
+            temp[i][0] = imgStr[array[i]];
         }
 
         // 사다리 생성
-        var ladderTb = document.getElementById('ladderTb');
         var lineImg = ['a.png', 'straight.png', 'eo.png'];
-        var temp = Array(Array(), Array(), Array(), Array(), Array());
 
         for (var j = 0; j < 5; j++) {
-            for (var i = 1; i <9; i++) {
-                if (j==0){
+            for (var i = 1; i < 9; i++) {
+                if (j == 0) {
                     var ran = Math.floor(Math.random() * (lineImg.length - 1));
                     ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[ran] + "'>";
-                    temp[j][i]= ran;
-                } else if (temp[j-1][i] == 0){
+                    temp[j][i] = ran;
+                } else if (temp[j - 1][i] == 0) {
                     ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[2] + "'>";
-                    temp[j][i]= 2;
+                    temp[j][i] = 2;
                 } else {
                     var ran = Math.floor(Math.random() * (lineImg.length - 1));
                     ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[ran] + "'>";
-                    temp[j][i]= ran;
+                    temp[j][i] = ran;
                 }
 
-                if(j == 4 && temp[j][i]==0){
+                if (j == 4 && temp[j][i] == 0) {
                     ladderTb.rows[i].cells[j].innerHTML = "<img src= 'img/" + lineImg[1] + "'>";
+                    temp[j][i] = 1;
                 }
             }
+        }
+        //console.log(temp);
+        connLeap(ran, answer);
+    }
+
+    // leapmotion
+    function connLeap(ran, answer) {
+        //console.log("leap : ", answer);
+        isPause = false;
+        connSet = null;
+
+        if (!isPause) {
+            var controller = new Leap.Controller();
+            controller.connect();
+
+            controller.on('connect', function () {
+                var count = [0, 0, 0, 0, 0];
+
+                if (connSet == null) {
+                    connSet = setInterval(function () {
+                        var frame = controller.frame();
+                        if (frame.hands.length > 0) {
+                            var hand = frame.hands[0];
+                            var fingers = hand.fingers[0];
+                            var extendedFingers = 0;
+
+                            for (var f = 0; f < hand.fingers.length; f++) {
+                                var finger = hand.fingers[f];
+                                if (finger.extended) extendedFingers++;
+                            }
+
+                            count[extendedFingers - 1]++;
+                            //console.log("extendedFingers : ", extendedFingers);
+                            //console.log("count : " , count);
+
+                            for (var i = 0; i < count.length; i++) {
+                                if (count[i] > 200) {
+                                    count = [0, 0, 0, 0, 0];
+                                    controller.disconnect();
+                                    selectBtn(i + 1, answer);
+                                }
+                            }
+                        }
+                    }, 10);
+                }
+            });
+        }
+    }
+
+    // 번호 선택
+    function selectBtn(i, answer) {
+        //console.log("selectBtn : ", answer);
+        clearInterval(connSet);
+        isPause = true;
+        //console.log("selectBtn i : ", i);
+        document.getElementById("btn" + i + "").src = "img/" + i + "_green.png";
+
+        setTimeout(play, 1500, i - 1, answer);
+    }
+
+    // 사다리타고 올라가기
+    function play(i, answer) {
+        //console.log("play i : ", i);
+        var j = 8;
+
+        while (j > 0) {
+            if (temp[i][j] == 0) {  //ㅏ 일 때,
+                ladderTb.rows[j].cells[i].innerHTML = "<img src= 'img/a_red_d.png'>";
+                ladderTb.rows[j].cells[i + 1].innerHTML = "<img src= 'img/eo_red_u.png'>";
+                i++;
+            }
+            else if (temp[i][j] == 1) {  // ㅣ 일 때,
+                ladderTb.rows[j].cells[i].innerHTML = "<img src= 'img/straight_red.png'>";
+            }
+            else if (temp[i][j] == 2) { //ㅓ 일 때
+                ladderTb.rows[j].cells[i].innerHTML = "<img src= 'img/eo_red_d.png'>";
+                ladderTb.rows[j].cells[i - 1].innerHTML = "<img src= 'img/a_red_u.png'>";
+                i--;
+            }
+            j--;
+            // console.log("temp i : ", i, "temp j : ", j);
+            // console.log("play temp : ", temp[i][j]);
+        }
+
+        // console.log(temp[i][j]);
+        // console.log(answer);
+        if (temp[i][j] == answer) {
+            console.log("정답입니다");
+            //document.getElementById('answer'+i+'').src = "img/answer.png";
+            restart();
+        } else {
+            console.log("틀렸습니다");
+            restart();
+        }
+    }
+
+    // 게임횟수 검사
+    function restart() {
+        gameCnt--;
+        if (gameCnt > 0) {
+            setTimeout(start, 2000);
+        } else {
+            console.log("끝");
         }
     }
 
