@@ -9,9 +9,11 @@
     <div id="pointDiv">
         <h1>사다리타기</h1>
         <div id="pointSpan">
-            <span><img src="img/empty.png" id="point1"></span><span><img src="img/empty.png"
-                    id="point2"></span><span><img src="img/empty.png" id="point3"></span><span><img src="img/empty.png"
-                    id="point4"></span><span><img src="img/empty.png" id="point5"></span>
+            <span><img src="img/empty.png" id="point1"></span>
+            <span><img src="img/empty.png" id="point2"></span>
+            <span><img src="img/empty.png" id="point3"></span>
+            <span><img src="img/empty.png" id="point4"></span>
+            <span><img src="img/empty.png" id="point5"></span>
         </div>
     </div>
 
@@ -23,25 +25,25 @@
     <!-- 이미지를 담을 테이블 생성 -->
     <table id="ladderTb">
         <tr>
-            <td style="position: relative">
-                <img src="" id="destination0">
-                <img src="img/answer.png" id="answer0" class="check">
+            <td style="width: 200px; height:215px;">
+                <div class="back"><img src="" id="destination0"></div>
+                <div class="front"><img src="" id="answer0"></div>
             </td>
-            <td style="position: relative;">
-                <img src="" id="destination1">
-                <img src="img/answer.png" id="answer1" class="check">
+            <td style="width: 200px; height:200px;">
+                <div class="back"><img src="" id="destination1"></div>
+                <div class="front"><img src="" id="answer1"></div>
             </td>
-            <td style="position: relative;">
-                <img src="" id="destination2">
-                <img src="img/answer.png" id="answer2" class="check">
+            <td style="width: 200px; height:200px;">
+                <div class="back"><img src="" id="destination2"></div>
+                <div class="front"><img src="" id="answer2"></div>
             </td>
-            <td style="position: relative;">
-                <img src="" id="destination3">
-                <img src="img/answer.png" id="answer3" class="check">
+            <td style="width: 200px; height:200px;">
+                <div class="back"><img src="" id="destination3"></div>
+                <div class="front"><img src="" id="answer3"></div>
             </td>
-            <td style="position: relative;">
-                <img src="" id="destination4">
-                <img src="img/answer.png" id="answer4" class="check">
+            <td style="width: 200px; height:200px;">
+                <div class="back"><img src="" id="destination4"></div>
+                <div class="front"><img src="" id="answer4"></div>
             </td>
         </tr>
         <tr>
@@ -123,9 +125,12 @@
         text-align: center;
     }
 
-    .check {
+    .front,
+    .back {
+        width: 200px;
+        height: 215px;
         position: absolute;
-        border: solid 1px;
+        top: 0;
     }
 
     #question {
@@ -143,8 +148,6 @@
         border-collapse: collapse;
         margin: 5% auto;
         text-align: center;
-        /* width: 1000px; */
-        /* position: relative; */
     }
 
     #pointSpan {
@@ -163,7 +166,6 @@
     td,
     tr {
         padding: 0;
-        border: solid 1px;
     }
 
     td {
@@ -178,7 +180,9 @@
     var connSet = null;
     var ladderTb = document.getElementById('ladderTb');
     var temp = Array(Array(), Array(), Array(), Array(), Array());
-    var gameCnt = 3;
+    var gameCnt = 5;
+    var green = 0;  // 정답
+    var red = 0;    // 오답
 
     // 문제 출력
     function start() {
@@ -224,7 +228,7 @@
         // 번호 버튼/정답표시 이미지 초기화
         for (var i = 1; i < 6; i++) {
             document.getElementById("btn" + i + "").src = "img/" + i + ".png";
-            //document.getElementById("answer"+(i-1)+"").src = "";
+            document.getElementById("answer"+(i-1)+"").src = "";
         }
 
         setTimeout(() => {
@@ -395,11 +399,17 @@
         // console.log(temp[i][j]);
         // console.log(answer);
         if (temp[i][j] == answer) {
-            console.log("정답입니다");
-            //document.getElementById('answer'+i+'').src = "img/answer.png";
+            //console.log("정답입니다");
+            green++;
+            var p = 6-gameCnt;
+            document.getElementById('answer'+i+'').src = "img/answer.png";
+            document.getElementById('point'+p+'').src = "img/green.png";
             restart();
         } else {
-            console.log("틀렸습니다");
+            //console.log("틀렸습니다");
+            red++;
+            var p = 6-gameCnt;
+            document.getElementById('point'+p+'').src = "img/red.png";
             restart();
         }
     }
@@ -417,6 +427,3 @@
 </script>
 
 </html>
-
-
-<!-- 테이블 값, tr, td값 고정시켜서 정답표시 img 위치 조정해보기 -->
