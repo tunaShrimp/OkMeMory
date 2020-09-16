@@ -5,22 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
 </head>
-
+    <div id="output"></div>
 <body>
-    <table>
-        <tr>
-            <td  style="position: relative;"><img src="img/bank.png" style="position: absolute;"><img src="img/answer.png"></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>
+
 </body>
 <style>
-  
+
 </style>
 <script>
+    function concatData(id, data){
+        return id + ": " + data + "<br>";
+    }
 
+    var output = document.getElementById('output');
+    var frameString = "", handString = "", fingerString = "";
+    var hand, finger;
+
+    var options= { enableGestures: true};
+
+    Leap.loop(options, function (frame) {
+        frameString = concatData("frame_id", frame.id);
+        frameString += concatData("num_hands", frame.hands.length);
+        frameString += concatData("num_fingers", frame.fingers.length);
+        frameString += "<br>"; 
+
+        output.innerHTML = frameString;
+    })
 </script>
 
 </html>

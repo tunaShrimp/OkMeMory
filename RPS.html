@@ -1,0 +1,192 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body>
+    <div id="pointDiv">
+        <h1>가위 바위 보</h1>
+        <div id="pointSpan">
+            <span><img src="img/empty.png" id="point1"></span>
+            <span><img src="img/empty.png" id="point2"></span>
+            <span><img src="img/empty.png" id="point3"></span>
+            <span><img src="img/empty.png" id="point4"></span>
+            <span><img src="img/empty.png" id="point5"></span>
+        </div>
+    </div>
+    <div id="container">
+        <div><img src="" id="aiHand"></div>
+    </div>
+    <div id="answer"></div>
+</body>
+<style>
+    #pointDiv {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    #pointSpan {
+        position: absolute;
+        top: 10%;
+        right: 5%;
+    }
+
+    #pointSpan img {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+    }
+
+    #container {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        margin-left: -50%;
+        width: 100%;
+        text-align: center;
+    }
+
+    img {
+        max-width: 300px;
+        max-height: 300px;
+    }
+
+    
+    #answer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -50%;
+        width: 100%;
+        text-align: center;
+        font-size: 50px;
+    }
+</style>
+<script>
+    // start
+    start();
+
+    var isPause = false;
+    var connSet = null;
+    var gameCnt = 5;
+    var green = 0;
+    var red = 0;
+
+    // 가위바위보 랜덤 제시
+    function start() {
+        var aiHand = document.getElementById('aiHand');
+        var aiHands = ["img/rock.png", "img/Scissors.png", "img/Paper.png"];
+        var ran = Math.floor(Math.random() * aiHands.length);
+        document.getElementById('answer').innerHTML = "";
+
+        aiHand.src = aiHands[ran];
+        connLeap(ran);
+    }
+
+    // leapmotion
+    function connLeap(ran) {
+        isPause = false;
+        connSet = null;
+
+        if (!isPause) {
+            var controller = new Leap.Controller();
+            controller.connect();
+
+            controller.on('connect', function () {
+                if (connSet == null) {
+                    connSet = setInterval(function () {
+                        var frame = controller.frame();
+                        if (frame.hands.length > 0) {
+                            var hand = frame.hands[0];
+                            var fingers = hand.fingers[0];
+                            var extendedFingers = 0;
+
+                            for (var f = 0; f < hand.fingers.length; f++) {
+                                var finger = hand.fingers[f];
+                                if (finger.extended) extendedFingers++;
+                            }
+                            //console.log("extendedFingers : ", extendedFingers);
+
+                            if (extendedFingers === 0) {
+                                console.log("바위");
+                                controller.disconnect();
+                                compare(ran, extendedFingers);
+                            } else if (extendedFingers === 2) {
+                                console.log("가위");
+                                controller.disconnect();
+                                compare(ran, extendedFingers);
+                            } else if (extendedFingers === 5) {
+                                console.log("보");
+                                controller.disconnect();
+                                compare(ran, extendedFingers);
+                            } else {
+                                console.log("다시 입력해 주세요.");
+                            }
+                        }
+                    }, 3000);
+                }
+            });
+        }
+    }
+
+    // 비교
+    function compare(ran, extendedFingers) {
+        clearInterval(connSet);
+        isPause = true;
+        //console.log("compare ran: ", ran);
+        //console.log("compare extendedFingers: ", extendedFingers);
+        var p = 6 - gameCnt;
+
+        switch (ran) {
+            case 0: // 바위
+                if (extendedFingers === 5) {
+                    green++;
+                    document.getElementById('answer').innerHTML = "WIN!";
+                    document.getElementById('point'+p+'').src = "img/green.png";
+                    break;
+                } else {
+                    red++;
+                    document.getElementById('answer').innerHTML = "FAIL!";
+                    document.getElementById('point'+p+'').src = "img/red.png";
+                    break;
+                }
+            case 1: // 가위
+                if (extendedFingers === 0) {
+                    green++;
+                    document.getElementById('answer').innerHTML = "WIN!";
+                    document.getElementById('point'+p+'').src = "img/green.png";
+                    break;
+                } else {
+                    red++;
+                    document.getElementById('answer').innerHTML = "FAIL!";
+                    document.getElementById('point'+p+'').src = "img/red.png";
+                    break;
+                }
+            case 2: // 보
+                if (extendedFingers === 2) {
+                    green++;
+                    document.getElementById('answer').innerHTML = "WIN!";
+                    document.getElementById('point'+p+'').src = "img/green.png";
+                    break;
+                } else {
+                    red++;
+                    document.getElementById('answer').innerHTML = "FAIL!";
+                    document.getElementById('point'+p+'').src = "img/red.png";
+                    break;
+                }
+        }
+        gameCnt--;
+
+        if (gameCnt > 0) {
+            setTimeout(start, 2000);
+        } else {
+            console.log("End");
+        }
+    }
+
+</script>
+
+</html>
