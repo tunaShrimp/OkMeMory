@@ -1,0 +1,211 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body>
+    <div id="pointDiv">
+        <h1>그림 판별하기</h1>
+        <div id="pointSpan">
+            <span><img src="img/empty.png" id="point1"></span>
+            <span><img src="img/empty.png" id="point2"></span>
+            <span><img src="img/empty.png" id="point3"></span>
+            <span><img src="img/empty.png" id="point4"></span>
+            <span><img src="img/empty.png" id="point5"></span>
+        </div>
+    </div>
+    <div id="info">
+        <span>제시어에 적합한 그림이면</span>
+        <img src="img/okPaper.png">
+        <span>적합하지 않으면</span>
+        <img src="img/noRock.png">
+        <sapn>을 해주세요.</sapn>
+    </div>
+    <div id="container"></div>
+    <div id="bord"><img src="" id="picture"></div>
+    <div class="front"><img src="" id="answer"></div>
+</body>
+<style>
+    #pointDiv {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    #pointSpan {
+        position: absolute;
+        top: 10%;
+        right: 5%;
+    }
+
+    #pointSpan img {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+    }
+
+    #info,
+    #container,
+    #bord,
+    .front {
+        position: absolute;
+        left: 50%;
+        margin-left: -50%;
+        width: 100%;
+        text-align: center;
+    }
+
+    #info {
+        top: 40%;
+        font-size: 30px;
+        display: none;
+    }
+
+    #container {
+        top: 40%;
+        font-size: 60px;
+    }
+
+    #bord
+    {
+        top: 20%;
+    }
+
+    .front {
+        top: 25%;
+    }
+
+</style>
+<script>
+    var info = document.getElementById('info');
+    var container = document.getElementById('container');
+    var cnt = 0;
+    var gameCtn = 5;
+    
+    // start
+    start();
+
+    // 안내 message
+    function start() {
+        setTimeout(() => {
+            info.style.display = "block";
+        }, 1000);
+
+        setTimeout(() => {
+            info.style.display = "none";
+        }, 5000);
+
+        setTimeout(quiz, 6000);
+    }
+
+    //제시어
+    function quiz() {
+        var words = ["동물", "식물", "곤충"];
+        var ran = Math.floor(Math.random() * words.length);
+
+        container.innerHTML = words[ran];
+        setTimeout(() => {
+            container.innerHTML = "";
+            picture(ran);
+        }, 3000);
+    }
+
+    // 이미지 출력
+    function picture(wr) {
+        var picture = document.getElementById('picture');
+        var animal = ["img/crocodile.png", "img/elepant.png", "img/giraffe.png", "img/zebra.png"];
+        var plant = ["img/tree1.png", "img/tree2.png", "img/tree3.png", "img/tree4.png"];
+        var insect = ["img/ant.png", "img/bee.png", "img/butterfly.png", "img/ladybug.png"];
+        var pictures = [animal, plant, insect];
+        //console.log(pictures);
+        var ran = Math.floor(Math.random() * pictures.length);
+        var r = Math.floor(Math.random() * pictures[ran].length);
+        document.getElementById('answer').src = "";
+        picture.src = "";
+        console.log("cnt : ", cnt);
+
+        setTimeout(() => {
+            picture.src = pictures[ran][r];
+            connLeap(wr, ran);
+        }, 2000);
+    }
+
+    //leapmotion grab
+    function connLeap(wr, r) {
+        isPause = false;
+        connSet = null;
+        console.log("wr : ", wr);
+        console.log("r : ", r);
+
+        if (!isPause) {
+            var controller = new Leap.Controller();
+            controller.connect();
+
+            controller.on('connect', function () {
+                if (connSet == null) {
+                    connSet = setInterval(function () {
+                        var frame = controller.frame();
+                        if (frame.hands.length > 0) {
+                            var hand = frame.hands[0];
+                            var grab = hand.grabStrength;
+                        }
+                        //console.log("grab : ", grab);
+                        if (grab === 1 || grab === 0) {
+                            controller.disconnect();
+                            answer(wr, r, grab);
+                        }
+                    }, 3000);
+                }
+            });
+        }
+    }
+
+    // 정답확인
+    function answer(wr, r, grab) {
+        isPause = true;
+        clearInterval(connSet);
+        //console.log(grab);
+        switch (grab) {
+            case 0:
+                if (wr == r) {
+                    console.log("정답!");
+                    document.getElementById('answer').src = "img/answer.png";
+                    break;
+                } else {
+                    console.log("땡!");
+                    document.getElementById('answer').src = "img/x.png";
+                    break;
+                }
+            case 1:
+                if (wr != r) {
+                    console.log("정답!");
+                    document.getElementById('answer').src = "img/answer.png";
+                    break;
+                } else {
+                    console.log("땡!");
+                    document.getElementById('answer').src = "img/x.png";
+                    break;
+                }
+        }
+        
+        if (cnt < 2) {
+            cnt++;
+            setTimeout(picture, 2000, wr);
+        } else {
+            gameCtn--;
+            if (gameCtn > 0){
+                setTimeout(() => {
+                    cnt = 0;
+                    document.getElementById('picture').src = "";
+                    document.getElementById('answer').src = "";
+                    console.log((5-gameCtn)+"round 끝");
+                }, 2000);
+                setTimeout(quiz, 4000);
+            }
+        }
+    }
+</script>
+
+</html>
