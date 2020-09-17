@@ -1,0 +1,204 @@
+<html>
+
+<head>
+    <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
+</head>
+
+<body>
+    <div id="pointDiv">
+        <h1>같은 카드 찾기</h1>
+        <div id="pointSpan">
+            <span><img src="img/empty.png" id="point1"></span>
+            <span><img src="img/empty.png" id="point2"></span>
+            <span><img src="img/empty.png" id="point3"></span>
+            <span><img src="img/empty.png" id="point4"></span>
+            <span><img src="img/empty.png" id="point5"></span>
+        </div>
+    </div>
+    <div id="info">
+        카드를 기억하고 같은 카드를 뒤집어 주세요.
+    </div>
+    <div id="container">
+        <span><img src="" id="card0"></span>
+        <span><img src="" id="card1"></span>
+        <span><img src="" id="card2"></span>
+        <span><img src="" id="card3"></span>
+        <span><img src="" id="card4"></span>
+        <span><img src="" id="card5"></span>
+    </div>
+</body>
+<style>
+    #pointDiv {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    #pointSpan {
+        position: absolute;
+        top: 10%;
+        right: 5%;
+    }
+
+    #pointSpan img {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+    }
+
+    #info,
+    #container {
+        position: absolute;
+        left: 50%;
+        margin-left: -50%;
+        width: 100%;
+        text-align: center;
+    }
+
+    #info {
+        top: 40%;
+        font-size: 30px;
+        display: none;
+    }
+
+    #container {
+        top: 30%;
+    }
+</style>
+<script>
+    var info = document.getElementById('info');
+    var card = ["img/bearCard.png", "img/catCard.png", "img/dogCard.png", "img/foxCard.png", "img/tigerCard.png", "img/lionCard.png"];
+    var backCard = "img/backCard.png";
+    // start
+    start();
+
+    function start() {
+        info.style.display = 'block';
+
+        setTimeout(() => {
+            info.style.display = 'none';
+        }, 3000);
+
+        setTimeout(cardImg, 5000);
+    }
+
+    // 카드 이미지 생성
+    function cardImg() {
+
+        // 카드 랜덤 뽑기(3장)
+        var num = 0;
+        var arr = [];
+        var arr2 = arr;
+
+        while (num < 3) {
+            var r = Math.floor(Math.random() * card.length);
+            if (!sameNum(r, arr)) {
+                arr.push(r);
+                num++;
+            }
+        }
+
+        var array = arr.concat(arr2);   // 배열 합치기
+        //console.log("array : " , array);
+        suffle(array);
+
+        // 순서 섞기
+        function suffle(a) {
+            var i, j, k;
+
+            for (i = a.length; i; i--) {
+                j = Math.floor(Math.random() * i);
+                k = a[i - 1];
+                a[i - 1] = a[j];
+                a[j] = k;
+            }
+        }
+        console.log("array : ", array);
+
+        // 카드 이미지 넣기
+        for (var i = 0; i < array.length; i++) {
+            document.getElementById("card" + i + "").src = card[array[i]];
+        }
+
+        // 카드 뒷면
+        setTimeout(() => {
+            for (var i = 0; i < array.length; i++) {
+                document.getElementById("card" + i + "").src = backCard;
+            }
+        }, 3000)
+
+        setTimeout(connLeap, 5000, array);
+    }
+
+
+    // 중복 검사
+    function sameNum(r, arr) {
+        for (var i = 0; i < arr.length; i++) {
+            if (r == arr[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //leapmotion    
+    function connLeap(array) {
+        isPause = false;
+        connSet = null;
+
+        if (!isPause) {
+            var controller = new Leap.Controller();
+            controller.connect();
+
+            controller.on('connect', function () {
+
+                if (connSet == null) {
+                    connSet = setInterval(function () {
+                        var frame = controller.frame();
+                        if (frame.hands.length > 0) {
+                            var hand = frame.hands[0];
+                            var fingers = hand.fingers[0];
+                            var extendedFingers = 0;
+
+                            for (var f = 0; f < hand.fingers.length; f++) {
+                                var finger = hand.fingers[f];
+                                if (finger.extended) extendedFingers++;
+                            }
+
+                            console.log("extendedFingers : ", extendedFingers);
+                            reverse(extendedFingers, array);
+                        }
+                    }, 3000);
+                }
+            });
+        }
+    }
+
+    // 선택한 카드 뒤집기
+    var fingersArr = [];
+
+    function reverse(f, array) {
+
+        if (!sameNum(f, fingersArr)){
+            fingersArr.push(f);
+        }
+        console.log("fingers array : ", fingersArr);
+    }
+
+    // 검사
+    // function inspection() {
+    //     // console.log("inspection fingersArr: ", fingersArr[0]);
+    //     // console.log("inspection fingersArr: ", fingersArr[1]);
+
+    //     if (fingersArr[0] != fingersArr[1]) {
+    //         document.getElementById('card' + fingersArr[0] + '').src = backCard;
+    //         document.getElementById('card' + fingersArr[1] + '').src = backCard;
+    //         fingerArr = [];
+    //     } else {
+    //         connLeap();
+    //     }
+    
+</script>
+
+</html>

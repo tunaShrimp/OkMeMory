@@ -7,7 +7,7 @@
 <body>
 
     <div id="pointDiv">
-        <h1>ì‚¬ë‹¤ë¦¬íƒ€ê¸°</h1>
+        <h1>?‚¬?‹¤ë¦¬í??ê¸?</h1>
         <div id="pointSpan">
             <span><img src="img/empty.png" id="point1"></span>
             <span><img src="img/empty.png" id="point2"></span>
@@ -19,10 +19,10 @@
 
     <div id="container">
         <span id="destination"></span>
-        <span id="question">ì„(ë¥¼) ì°¾ì•„ê°€ì„¸ìš”.</span>
+        <span id="question">?„(ë¥?) ì°¾ì•„ê°??„¸?š”.</span>
     </div>
 
-    <!-- ì´ë¯¸ì§€ë¥¼ ë‹´ì„ í…Œì´ë¸” ìƒì„± -->
+    <!-- ?´ë¯¸ì??ë¥? ?‹´?„ ?…Œ?´ë¸? ?ƒ?„± -->
     <table id="ladderTb">
         <tr>
             <td style="width: 200px; height:215px;">
@@ -173,7 +173,7 @@
     }
 </style>
 <script>
-    // ì‹œì‘
+    // ?‹œ?‘
     start();
 
     var isPause = false;
@@ -181,12 +181,12 @@
     var ladderTb = document.getElementById('ladderTb');
     var temp = Array(Array(), Array(), Array(), Array(), Array());
     var gameCnt = 5;
-    var green = 0;  // ì •ë‹µ
-    var red = 0;    // ì˜¤ë‹µ
+    var green = 0;  // ? •?‹µ
+    var red = 0;    // ?˜¤?‹µ
 
     // ë¬¸ì œ ì¶œë ¥
     function start() {
-        var imgStr = ["ì€í–‰", "ì†Œë°©ì„œ", "ë³‘ì›", "ë„ì„œê´€", "ë°•ë¬¼ê´€", "ê²½ì°°ì„œ", "ìš°ì²´êµ­", "í•™êµ"];
+        var imgStr = ["????–‰", "?†Œë°©ì„œ", "ë³‘ì›", "?„?„œê´?", "ë°•ë¬¼ê´?", "ê²½ì°°?„œ", "?š°ì²´êµ­", "?•™êµ?"];
 
         var destination = document.getElementById('destination');
         destination.style.fontSize = "50px";
@@ -225,7 +225,7 @@
 
         destination.innerHTML = imgStr[ran];
 
-        // ë²ˆí˜¸ ë²„íŠ¼/ì •ë‹µí‘œì‹œ ì´ë¯¸ì§€ ì´ˆê¸°í™”
+        // ë²ˆí˜¸ ë²„íŠ¼/? •?‹µ?‘œ?‹œ ?´ë¯¸ì?? ì´ˆê¸°?™”
         for (var i = 1; i < 6; i++) {
             document.getElementById("btn" + i + "").src = "img/" + i + ".png";
             document.getElementById("answer"+(i-1)+"").src = "";
@@ -241,12 +241,12 @@
         }, 4000);
     }
 
-    // ì‚¬ë‹¤ë¦¬ Game img ìƒì„±
+    // ?‚¬?‹¤ë¦? Game img ?ƒ?„±
     function ladderGame(ran, imgStr, answer) {
         var building = ["img/bank.png", "img/fireStation.png", "img/hospital.png", "img/library.png", "img/museum.png", "img/police.png", "img/postOffice.png", "img/school.png"];
 
         //console.log("ladderGame : ", answer);
-        // 0~6ê¹Œì§€ ì¤‘ë³µë˜ì§€ ì•ŠëŠ” ëœë¤ ìˆ«ì 4ê°œ ìƒì„±
+        // 0~6ê¹Œì?? ì¤‘ë³µ?˜ì§? ?•Š?Š” ?œ?¤ ?ˆ«? 4ê°? ?ƒ?„±
         var array = [];
         var num = 0;
         array.push(ran);
@@ -259,7 +259,7 @@
             }
         }
 
-        // ì¤‘ë³µê²€ì‚¬
+        // ì¤‘ë³µê²??‚¬
         function sameNum(r) {
             for (var i = 0; i < array.length; i++) {
                 if (r == array[i]) {
@@ -271,7 +271,7 @@
         //console.log("array : ", array);
         shuffle(array);
 
-        // ì´ë¯¸ì§€ ìˆœì„œ ì„ê¸°
+        // ?´ë¯¸ì?? ?ˆœ?„œ ?„ê¸?
         function shuffle(a) {
             var i, j, k;
 
@@ -283,13 +283,13 @@
             }
         }
 
-        // ì´ë¯¸ì§€ ëœë¤ ìƒì„±
+        // ?´ë¯¸ì?? ?œ?¤ ?ƒ?„±
         for (var i = 0; i < array.length; i++) {
             document.getElementById("destination" + i + "").src = building[array[i]];
             temp[i][0] = imgStr[array[i]];
         }
 
-        // ì‚¬ë‹¤ë¦¬ ìƒì„±
+        // ?‚¬?‹¤ë¦? ?ƒ?„±
         var lineImg = ['a.png', 'straight.png', 'eo.png'];
 
         for (var j = 0; j < 5; j++) {
@@ -361,7 +361,7 @@
         }
     }
 
-    // ë²ˆí˜¸ ì„ íƒ
+    // ë²ˆí˜¸ ?„ ?ƒ
     function selectBtn(i, answer) {
         //console.log("selectBtn : ", answer);
         clearInterval(connSet);
@@ -372,21 +372,21 @@
         setTimeout(play, 1500, i - 1, answer);
     }
 
-    // ì‚¬ë‹¤ë¦¬íƒ€ê³  ì˜¬ë¼ê°€ê¸°
+    // ?‚¬?‹¤ë¦¬í??ê³? ?˜¬?¼ê°?ê¸?
     function play(i, answer) {
         //console.log("play i : ", i);
         var j = 8;
 
         while (j > 0) {
-            if (temp[i][j] == 0) {  //ã… ì¼ ë•Œ,
+            if (temp[i][j] == 0) {  //?… ?¼ ?•Œ,
                 ladderTb.rows[j].cells[i].innerHTML = "<img src= 'img/a_red_d.png'>";
                 ladderTb.rows[j].cells[i + 1].innerHTML = "<img src= 'img/eo_red_u.png'>";
                 i++;
             }
-            else if (temp[i][j] == 1) {  // ã…£ ì¼ ë•Œ,
+            else if (temp[i][j] == 1) {  // ?…£ ?¼ ?•Œ,
                 ladderTb.rows[j].cells[i].innerHTML = "<img src= 'img/straight_red.png'>";
             }
-            else if (temp[i][j] == 2) { //ã…“ ì¼ ë•Œ
+            else if (temp[i][j] == 2) { //?…“ ?¼ ?•Œ
                 ladderTb.rows[j].cells[i].innerHTML = "<img src= 'img/eo_red_d.png'>";
                 ladderTb.rows[j].cells[i - 1].innerHTML = "<img src= 'img/a_red_u.png'>";
                 i--;
@@ -399,14 +399,14 @@
         // console.log(temp[i][j]);
         // console.log(answer);
         if (temp[i][j] == answer) {
-            //console.log("ì •ë‹µì…ë‹ˆë‹¤");
+            //console.log("? •?‹µ?…?‹ˆ?‹¤");
             green++;
             var p = 6-gameCnt;
             document.getElementById('answer'+i+'').src = "img/answer.png";
             document.getElementById('point'+p+'').src = "img/green.png";
             restart();
         } else {
-            //console.log("í‹€ë ¸ìŠµë‹ˆë‹¤");
+            //console.log("???? ¸?Šµ?‹ˆ?‹¤");
             red++;
             var p = 6-gameCnt;
             document.getElementById('answer'+i+'').src = "img/x.png";
@@ -415,13 +415,13 @@
         }
     }
 
-    // ê²Œì„íšŸìˆ˜ ê²€ì‚¬
+    // ê²Œì„?šŸ?ˆ˜ ê²??‚¬
     function restart() {
         gameCnt--;
         if (gameCnt > 0) {
             setTimeout(start, 2000);
         } else {
-            console.log("ë");
+            console.log("?");
         }
     }
 
