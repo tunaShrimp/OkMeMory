@@ -21,32 +21,32 @@
     <div id='container'>
         <div class='box'>
             <div class='front'><img src=""></div>
-            <div class='back'><img src="img/backCard.png"></div>
+            <div class='back'><img src=""></div>
         </div>
 
         <div class='box'>
             <div class='front'><img src=""></div>
-            <div class='back'><img src="img/backCard.png"></div>
+            <div class='back'><img src=""></div>
         </div>
 
         <div class='box'>
             <div class='front'><img src=""></div>
-            <div class='back'><img src="img/backCard.png"></div>
+            <div class='back'><img src=""></div>
         </div>
 
         <div class='box'>
             <div class='front'><img src=""></div>
-            <div class='back'><img src="img/backCard.png"></div>
+            <div class='back'><img src=""></div>
         </div>
 
         <div class='box'>
             <div class='front'><img src=""></div>
-            <div class='back'><img src="img/backCard.png"></div>
+            <div class='back'><img src=""></div>
         </div>
 
         <div class='box'>
             <div class='front'><img src=""></div>
-            <div class='back'><img src="img/backCard.png"></div>
+            <div class='back'><img src=""></div>
         </div>
     </div>
 </body>
@@ -99,7 +99,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        display: none;
+
     }
 
     .front {
@@ -174,17 +174,21 @@
             cardClass[i].querySelector("img").src = card[array[i]];
         }
         //for (var i in cardClass) cardClass[i].src = card[array[i]];
-        setTimeout(backCard, 3000);
+        setTimeout(hideCard, 3000);
+    }
+
+    // 카드 숨기기
+    function hideCard(){
+        for (var i = 0; i < cardClass.length; i++) {
+            cardClass[i].style.display = 'none';
+        } 
+        backCard(); 
     }
 
     // 카드 뒷면 보여주기
     function backCard() {
-        // 카드 숨기기
-        for (var i = 0; i < cardClass.length; i++) {
-            cardClass[i].style.display = 'none';
-        }
-        for (var j = 0; j < backClass.length; j++) {
-            backClass[i].style.display = 'block';
+        for (var i = 0; i < backClass.length; i++) {
+            backClass[i].querySelector("img").src = 'img/backCard.png';
         }
     }
 
