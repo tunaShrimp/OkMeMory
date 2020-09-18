@@ -18,13 +18,36 @@
     <div id="info">
         카드를 기억하고 같은 카드를 뒤집어 주세요.
     </div>
-    <div id="container">
-        <span><img src="" id="card0"></span>
-        <span><img src="" id="card1"></span>
-        <span><img src="" id="card2"></span>
-        <span><img src="" id="card3"></span>
-        <span><img src="" id="card4"></span>
-        <span><img src="" id="card5"></span>
+    <div id='container'>
+        <div class='box'>
+            <div class='front'><img src=""></div>
+            <div class='back'><img src="img/backCard.png"></div>
+        </div>
+
+        <div class='box'>
+            <div class='front'><img src=""></div>
+            <div class='back'><img src="img/backCard.png"></div>
+        </div>
+
+        <div class='box'>
+            <div class='front'><img src=""></div>
+            <div class='back'><img src="img/backCard.png"></div>
+        </div>
+
+        <div class='box'>
+            <div class='front'><img src=""></div>
+            <div class='back'><img src="img/backCard.png"></div>
+        </div>
+
+        <div class='box'>
+            <div class='front'><img src=""></div>
+            <div class='back'><img src="img/backCard.png"></div>
+        </div>
+
+        <div class='box'>
+            <div class='front'><img src=""></div>
+            <div class='back'><img src="img/backCard.png"></div>
+        </div>
     </div>
 </body>
 <style>
@@ -47,29 +70,51 @@
         height: auto;
     }
 
-    #info,
-    #container {
+    #info {
         position: absolute;
         left: 50%;
         margin-left: -50%;
         width: 100%;
         text-align: center;
-    }
-
-    #info {
         top: 40%;
         font-size: 30px;
         display: none;
     }
 
     #container {
-        top: 30%;
+        width: 720px;
+        height: 100px;
+        margin: 15% auto 0;
+    }
+
+    .box {
+        float: left;
+        width: 100px;
+        height: 100px;
+        margin: 0 10px;
+        position: relative;
+    }
+
+    .back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+    }
+
+    .front {
+        position: absolute;
+        left: 0;
+        top: 0;
     }
 </style>
 <script>
     var info = document.getElementById('info');
+    var cardClass = document.getElementsByClassName('front');
+    var backClass = document.getElementsByClassName('back');
+
     var card = ["img/bearCard.png", "img/catCard.png", "img/dogCard.png", "img/foxCard.png", "img/tigerCard.png", "img/lionCard.png"];
-    var backCard = "img/backCard.png";
+
     // start
     start();
 
@@ -80,125 +125,177 @@
             info.style.display = 'none';
         }, 3000);
 
-        setTimeout(cardImg, 5000);
+        setTimeout(drawing, 5000);
     }
 
-    // 카드 이미지 생성
-    function cardImg() {
-
-        // 카드 랜덤 뽑기(3장)
+    // 카드 이미지 3장 뽑기
+    function drawing() {
         var num = 0;
-        var arr = [];
-        var arr2 = arr;
+        var arr1 = [];
+        var arr2 = arr1;
 
         while (num < 3) {
             var r = Math.floor(Math.random() * card.length);
-            if (!sameNum(r, arr)) {
-                arr.push(r);
+            if (!sameNum(r, arr1)) {
+                arr1.push(r);
                 num++;
             }
         }
 
-        var array = arr.concat(arr2);   // 배열 합치기
-        //console.log("array : " , array);
+        var array = arr1.concat(arr2);  // 배열 합치기 (한쌍 씩 3개 존재)
+
         suffle(array);
+        insertCard(array);
 
-        // 순서 섞기
-        function suffle(a) {
-            var i, j, k;
-
-            for (i = a.length; i; i--) {
-                j = Math.floor(Math.random() * i);
-                k = a[i - 1];
-                a[i - 1] = a[j];
-                a[j] = k;
-            }
-        }
-        console.log("array : ", array);
-
-        // 카드 이미지 넣기
-        for (var i = 0; i < array.length; i++) {
-            document.getElementById("card" + i + "").src = card[array[i]];
-        }
-
-        // 카드 뒷면
-        setTimeout(() => {
-            for (var i = 0; i < array.length; i++) {
-                document.getElementById("card" + i + "").src = backCard;
-            }
-        }, 3000)
-
-        setTimeout(connLeap, 5000, array);
     }
 
-
-    // 중복 검사
+    // 중복검사
     function sameNum(r, arr) {
         for (var i = 0; i < arr.length; i++) {
-            if (r == arr[i]) {
-                return true;
-            }
+            if (r == arr[i]) return true;
         }
         return false;
     }
 
-    //leapmotion    
-    function connLeap(array) {
-        isPause = false;
-        connSet = null;
+    // 순서 섞기
+    function suffle(a) {
+        var i, j, k;
+        for (i = a.length; i; i--) {
+            j = Math.floor(Math.random() * i);
+            k = a[i - 1];
+            a[i - 1] = a[j];
+            a[j] = k;
+        }
+    }
 
-        if (!isPause) {
-            var controller = new Leap.Controller();
-            controller.connect();
+    // 카드 이미지 넣기
+    function insertCard(array) {
+        for (var i = 0; i < cardClass.length; i++) {
+            cardClass[i].querySelector("img").src = card[array[i]];
+        }
+        //for (var i in cardClass) cardClass[i].src = card[array[i]];
+        setTimeout(backCard, 3000);
+    }
 
-            controller.on('connect', function () {
-
-                if (connSet == null) {
-                    connSet = setInterval(function () {
-                        var frame = controller.frame();
-                        if (frame.hands.length > 0) {
-                            var hand = frame.hands[0];
-                            var fingers = hand.fingers[0];
-                            var extendedFingers = 0;
-
-                            for (var f = 0; f < hand.fingers.length; f++) {
-                                var finger = hand.fingers[f];
-                                if (finger.extended) extendedFingers++;
-                            }
-
-                            console.log("extendedFingers : ", extendedFingers);
-                            reverse(extendedFingers, array);
-                        }
-                    }, 3000);
-                }
-            });
+    // 카드 뒷면 보여주기
+    function backCard() {
+        // 카드 숨기기
+        for (var i = 0; i < cardClass.length; i++) {
+            cardClass[i].style.display = 'none';
+        }
+        for (var j = 0; j < backClass.length; j++) {
+            backClass[i].style.display = 'block';
         }
     }
 
     // 선택한 카드 뒤집기
-    var fingersArr = [];
+    function reverse() {
 
-    function reverse(f, array) {
-
-        if (!sameNum(f, fingersArr)){
-            fingersArr.push(f);
-        }
-        console.log("fingers array : ", fingersArr);
     }
 
-    // 검사
-    // function inspection() {
-    //     // console.log("inspection fingersArr: ", fingersArr[0]);
-    //     // console.log("inspection fingersArr: ", fingersArr[1]);
 
-    //     if (fingersArr[0] != fingersArr[1]) {
-    //         document.getElementById('card' + fingersArr[0] + '').src = backCard;
-    //         document.getElementById('card' + fingersArr[1] + '').src = backCard;
-    //         fingerArr = [];
-    //     } else {
-    //         connLeap();
+//------------------------------//
+    // // 카드 이미지 생성
+    // function cardImg() {
+
+    //     // 카드 랜덤 뽑기(3장)
+    //     var num = 0;
+    //     var arr = [];
+    //     var arr2 = arr;
+
+    //     while (num < 3) {
+    //         var r = Math.floor(Math.random() * card.length);
+    //         if (!sameNum(r, arr)) {
+    //             arr.push(r);
+    //             num++;
+    //         }
     //     }
-    
+
+    //     var array = arr.concat(arr2);   // 배열 합치기
+    //     //console.log("array : " , array);
+    //     suffle(array);
+
+    //     // 순서 섞기
+    //     function suffle(a) {
+    //         var i, j, k;
+
+    //         for (i = a.length; i; i--) {
+    //             j = Math.floor(Math.random() * i);
+    //             k = a[i - 1];
+    //             a[i - 1] = a[j];
+    //             a[j] = k;
+    //         }
+    //     }
+    //     console.log("array : ", array);
+
+    //     // 카드 이미지 넣기
+    //     var insertCard = document.getElementsByClassName('card');
+    //     var backImg = document.getElementsByClassName('back');
+
+    //     for(var i in insertCard) insertCard[i].src = card[array[i]];
+
+    //     // 카드 뒷면
+    //     setTimeout(() => {
+    //         for (var i in insertCard) insertCard[i].style.display = "none";
+    //         for (var i in backImg) backImg[i].style.display = "block";
+    //     }, 3000)
+
+    //     // setTimeout(connLeap, 5000, array);
+    // }
+
+
+    // // 중복 검사
+    // function sameNum(r, arr) {
+    //     for (var i = 0; i < arr.length; i++) {
+    //         if (r == arr[i]) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    // //leapmotion    
+    // function connLeap(array) {
+    //     isPause = false;
+    //     connSet = null;
+
+    //     if (!isPause) {
+    //         var controller = new Leap.Controller();
+    //         controller.connect();
+
+    //         controller.on('connect', function () {
+
+    //             if (connSet == null) {
+    //                 connSet = setInterval(function () {
+    //                     var frame = controller.frame();
+    //                     if (frame.hands.length > 0) {
+    //                         var hand = frame.hands[0];
+    //                         var fingers = hand.fingers[0];
+    //                         var extendedFingers = 0;
+
+    //                         for (var f = 0; f < hand.fingers.length; f++) {
+    //                             var finger = hand.fingers[f];
+    //                             if (finger.extended) extendedFingers++;
+    //                         }
+
+    //                         console.log("extendedFingers : ", extendedFingers);
+
+    //                         reverse(extendedFingers, array);
+    //                     }
+    //                 }, 3000);
+    //             }
+    //         });
+    //     }
+    // }
+
+    // // 선택한 카드 뒤집기
+    // var fingersArr = [];
+
+    // function reverse(f, array) {
+    //     document.getElementById('card'+f+'').src = card[array[f]];
+    // }
+
+
 </script>
 
 </html>

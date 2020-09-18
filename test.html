@@ -1,38 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <script src="https://js.leapmotion.com/leap-0.6.4.min.js"></script>
 </head>
-    <div id="output"></div>
-<body>
 
+<body>
+    <div id="pointDiv">
+        <h1>같은 카드 찾기</h1>
+        <div id="pointSpan">
+            <span><img src="img/empty.png" id="point1"></span>
+            <span><img src="img/empty.png" id="point2"></span>
+            <span><img src="img/empty.png" id="point3"></span>
+            <span><img src="img/empty.png" id="point4"></span>
+            <span><img src="img/empty.png" id="point5"></span>
+        </div>
+    </div>
+    <div id="info">
+        카드를 기억하고 같은 카드를 뒤집어 주세요.
+    </div>
+    <div id="container">
+        <div class="box">
+            <div class="front"><img src="img/backCard.png"></div>
+            <div class="back"><img src="img/tigerCard.png"></div>
+        </div>
+
+        <div class="box">
+            <div class="front"><img src="img/backCard.png"></div>
+            <div class="back"><img src="img/tigerCard.png"></div>
+        </div>
+    </div>
 </body>
 <style>
+    *reset*
+    *{margin: 0; padding: 0;}
+    
+    #pointDiv {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    #pointSpan {
+        position: absolute;
+        top: 10%;
+        right: 5%;
+    }
+
+    #pointSpan img {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+    }
+
+    #info
+    {
+        position: absolute;
+        left: 50%;
+        margin-left: -50%;
+        width: 100%;
+        text-align: center;
+    }
+
+    #info {
+        top: 40%;
+        font-size: 30px;
+        display: none;
+    }
+
+    #container {
+        width: 460px;
+        margin: 100px auto 0;
+        border: solid 1px;
+    }
+
+    .box {
+        float: left;
+        width: 200px;
+        height: 200px;
+        margin: 0 30px;
+    }
 
 </style>
 <script>
-    function concatData(id, data){
-        return id + ": " + data + "<br>";
+    var info = document.getElementById('info');
+    var cardClass = document.getElementsByClassName('card');
+    var backClass = document.getElementsByClassName('back');
+
+    var card = ["img/bearCard.png", "img/catCard.png", "img/dogCard.png", "img/foxCard.png", "img/tigerCard.png", "img/lionCard.png"];
+
+    // start
+    //start();
+
+    function start() {
+        info.style.display = 'block';
+
+        setTimeout(() => {
+            info.style.display = 'none';
+        }, 3000);
+
+        setTimeout(drawing, 5000);
     }
 
-    var output = document.getElementById('output');
-    var frameString = "", handString = "", fingerString = "";
-    var hand, finger;
+    // 카드 이미지 3장 뽑기
+    function drawing() {
+        var num = 0;
+        var arr1 = [];
+        var arr2 = arr1;
 
-    var options= { enableGestures: true};
+        while (num < 3) {
+            var r = Math.floor(Math.random() * card.length);
+            if (!sameNum(r, arr1)) {
+                arr1.push(r);
+                num++;
+            }
+        }
+        
+        var array = arr1.concat(arr2);  // 배열 합치기 (한쌍 씩 3개 존재)
 
-    Leap.loop(options, function (frame) {
-        frameString = concatData("frame_id", frame.id);
-        frameString += concatData("num_hands", frame.hands.length);
-        frameString += concatData("num_fingers", frame.fingers.length);
-        frameString += "<br>"; 
+        suffle(array);
+        insertCard(array);
+        
+    }
 
-        output.innerHTML = frameString;
-    })
+    // 중복검사
+    function sameNum(r, arr) {
+        for (var i = 0; i < arr.length; i++) {
+            if (r == arr[i]) return true;
+        }
+        return false;
+    }
+
+    // 순서 섞기
+    function suffle(a) {
+        var i, j, k;
+        for (i = a.length; i; i--) {
+            j = Math.floor(Math.random() * i);
+            k = a[i-1];
+            a[i-1] = a[j];
+            a[j] = k;
+        }
+    }
+
+    // 카드 이미지 넣기
+    function insertCard(array) {
+        for (var i in cardClass) cardClass[i].src = card[array[i]];
+        setTimeout(backCard, 3000);
+    }
+
+    // 카드 뒷면 보여주기
+    function backCard() {
+        // 카드 숨기기
+        for (var i = 0; i < cardClass.length; i++) {
+            cardClass[i].style.display = 'none';
+        }
+        
+        setTimeout(() => {
+            for (var i in backClass) backClass[i].src = "img/backCard.png";
+        },2000)
+    }
+
+    // 선택한 카드 뒤집기
+    function reverse() {
+
+    }
+
+
 </script>
 
 </html>
