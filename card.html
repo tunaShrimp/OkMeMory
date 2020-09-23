@@ -8,11 +8,11 @@
     <div id="pointDiv">
         <h1>같은 카드 찾기</h1>
         <div id="pointSpan">
-            <span><img src="img/empty.png" id="point1"></span>
-            <span><img src="img/empty.png" id="point2"></span>
-            <span><img src="img/empty.png" id="point3"></span>
-            <span><img src="img/empty.png" id="point4"></span>
-            <span><img src="img/empty.png" id="point5"></span>
+            <span class="point"><img src="img/empty.png"></span>
+            <span class="point"><img src="img/empty.png"></span>
+            <span class="point"><img src="img/empty.png"></span>
+            <span class="point"><img src="img/empty.png"></span>
+            <span class="point"><img src="img/empty.png"></span>
         </div>
     </div>
     <div id="info">
@@ -112,13 +112,17 @@
     var info = document.getElementById('info');
     var cardClass = document.getElementsByClassName('front');
     var backClass = document.getElementsByClassName('back');
+    var point = document.getElementsByClassName('point');
 
     var card = ["img/bearCard.png", "img/catCard.png", "img/dogCard.png", "img/foxCard.png", "img/tigerCard.png", "img/lionCard.png"];
+    var array = new Array();
+    var gameCnt = 5;
 
     // start
     start();
 
     function start() {
+        console.log("---start---");
         info.style.display = 'block';
 
         setTimeout(() => {
@@ -130,6 +134,8 @@
 
     // 카드 이미지 3장 뽑기
     function drawing() {
+        console.log("---drawing---");
+
         var num = 0;
         var arr1 = [];
         var arr2 = arr1;
@@ -142,15 +148,17 @@
             }
         }
 
-        var array = arr1.concat(arr2);  // 배열 합치기 (한쌍 씩 3개 존재)
+        array = arr1.concat(arr2);  // 배열 합치기 (한쌍 씩 3개 존재)
 
         suffle(array);
-        insertCard(array);
+        insertCard();
 
     }
 
     // 중복검사
     function sameNum(r, arr) {
+        console.log("---sameNum---");
+
         for (var i = 0; i < arr.length; i++) {
             if (r == arr[i]) return true;
         }
@@ -159,6 +167,8 @@
 
     // 순서 섞기
     function suffle(a) {
+        console.log("---suffle---");
+
         var i, j, k;
         for (i = a.length; i; i--) {
             j = Math.floor(Math.random() * i);
@@ -169,135 +179,162 @@
     }
 
     // 카드 이미지 넣기
-    function insertCard(array) {
+    function insertCard() {
+        console.log("---insertCard---");
+
         for (var i = 0; i < cardClass.length; i++) {
+            cardClass[i].style.display = "block";
             cardClass[i].querySelector("img").src = card[array[i]];
         }
-        //for (var i in cardClass) cardClass[i].src = card[array[i]];
+
         setTimeout(hideCard, 3000);
     }
 
     // 카드 숨기기
-    function hideCard(){
+    function hideCard() {
+        console.log("---hideCard---");
+
         for (var i = 0; i < cardClass.length; i++) {
             cardClass[i].style.display = 'none';
-        } 
-        backCard(); 
+        }
+        backCard();
     }
 
     // 카드 뒷면 보여주기
     function backCard() {
+        console.log("---backCard---");
+
         for (var i = 0; i < backClass.length; i++) {
+            backClass[i].style.display = "block";
             backClass[i].querySelector("img").src = 'img/backCard.png';
+        }
+        connLeap();
+    }
+
+    // 모든 카드가 뒤집혔는지 검사
+    function emptyCard() {
+        console.log("---emptyCard---");
+
+        for (var i = 0; i < checkCard.length; i++) {
+            if (checkCard[i] == 0) return false;
+        }
+        return true;
+    }
+
+    // 선택한 숫자 받기 && 카드 뒤집기
+    var first = -1;
+    var second = -1;
+    var checkCard = [0, 0, 0, 0, 0, 0];
+
+    function selectNum(f) {
+        console.log("---selectNum---");
+
+        isPause = true;
+        clearInterval(connSet);
+        console.log(array);
+        console.log("extendedFinger : ", f);
+        console.log("emptyCard : ", checkCard);
+
+        if (!emptyCard()) {
+            if (checkCard[f] != 1) {
+                if (first == -1) {
+                    first = f;
+                    cardClass[first].style.display = "block";
+                    backClass[first].style.display = "none";
+                    connLeap();
+                } else if (first != f) {
+                    second = f;
+                    cardClass[second].style.display = "block";
+                    backClass[second].style.display = "none";
+
+                    setTimeout(() => {
+                        if (array[first] != array[second]) {
+                            cardClass[first].style.display = "none";
+                            backClass[first].style.display = "block";
+                            cardClass[second].style.display = "none";
+                            backClass[second].style.display = "block";
+                            console.log("땡");
+                            first = -1;
+                            second = -1;
+                            setTimeout(connLeap, 1000);
+                        } else {
+                            checkCard[first] = 1;
+                            checkCard[second] = 1;
+                            console.log("정답");
+                            first = -1;
+                            second = -1;
+                            connLeap();
+                        }
+                    }, 1000);
+
+                } else {
+                    console.log("다시입력");
+                    connLeap();
+                }
+
+                console.log("first : ", first, "second : ", second);
+            } else {
+                console.log("---1--- 다시 입력");
+                connLeap();
+            }
+        } else {
+            console.log("모두 뒤집었습니다.");
+            reset();
         }
     }
 
-    // 선택한 카드 뒤집기
-    function reverse() {
+    // reset
+    function reset() {
+        console.log("---reset---");
+        for (var i = 0; i < cardClass.length; i++) {
+            cardClass[i].style.display = "none";
+        }
+        checkCard = [0, 0, 0, 0, 0, 0];
 
+        point[5-gameCnt].querySelector('img').src = "img/green.png";
+        if (gameCnt > 1) {
+            gameCnt--;
+            setTimeout(drawing, 3000);
+        } else {
+            console.log("END");
+        }
     }
 
+    // leapmotion
+    function connLeap() {
+        console.log("---connLeap---");
 
-//------------------------------//
-    // // 카드 이미지 생성
-    // function cardImg() {
+        isPause = false;
+        connSet = null;
 
-    //     // 카드 랜덤 뽑기(3장)
-    //     var num = 0;
-    //     var arr = [];
-    //     var arr2 = arr;
+        if (!isPause) {
+            var controller = new Leap.Controller();
+            controller.connect();
 
-    //     while (num < 3) {
-    //         var r = Math.floor(Math.random() * card.length);
-    //         if (!sameNum(r, arr)) {
-    //             arr.push(r);
-    //             num++;
-    //         }
-    //     }
+            controller.on('connect', function () {
 
-    //     var array = arr.concat(arr2);   // 배열 합치기
-    //     //console.log("array : " , array);
-    //     suffle(array);
+                if (connSet == null) {
+                    connSet = setInterval(function () {
+                        var frame = controller.frame();
+                        if (frame.hands.length > 0) {
+                            var hand = frame.hands[0];
+                            var fingers = hand.fingers[0];
+                            var extendedFingers = 0;
 
-    //     // 순서 섞기
-    //     function suffle(a) {
-    //         var i, j, k;
+                            for (var f = 0; f < hand.fingers.length; f++) {
+                                var finger = hand.fingers[f];
+                                if (finger.extended) extendedFingers++;
+                            }
 
-    //         for (i = a.length; i; i--) {
-    //             j = Math.floor(Math.random() * i);
-    //             k = a[i - 1];
-    //             a[i - 1] = a[j];
-    //             a[j] = k;
-    //         }
-    //     }
-    //     console.log("array : ", array);
-
-    //     // 카드 이미지 넣기
-    //     var insertCard = document.getElementsByClassName('card');
-    //     var backImg = document.getElementsByClassName('back');
-
-    //     for(var i in insertCard) insertCard[i].src = card[array[i]];
-
-    //     // 카드 뒷면
-    //     setTimeout(() => {
-    //         for (var i in insertCard) insertCard[i].style.display = "none";
-    //         for (var i in backImg) backImg[i].style.display = "block";
-    //     }, 3000)
-
-    //     // setTimeout(connLeap, 5000, array);
-    // }
-
-
-    // // 중복 검사
-    // function sameNum(r, arr) {
-    //     for (var i = 0; i < arr.length; i++) {
-    //         if (r == arr[i]) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    // //leapmotion    
-    // function connLeap(array) {
-    //     isPause = false;
-    //     connSet = null;
-
-    //     if (!isPause) {
-    //         var controller = new Leap.Controller();
-    //         controller.connect();
-
-    //         controller.on('connect', function () {
-
-    //             if (connSet == null) {
-    //                 connSet = setInterval(function () {
-    //                     var frame = controller.frame();
-    //                     if (frame.hands.length > 0) {
-    //                         var hand = frame.hands[0];
-    //                         var fingers = hand.fingers[0];
-    //                         var extendedFingers = 0;
-
-    //                         for (var f = 0; f < hand.fingers.length; f++) {
-    //                             var finger = hand.fingers[f];
-    //                             if (finger.extended) extendedFingers++;
-    //                         }
-
-    //                         console.log("extendedFingers : ", extendedFingers);
-
-    //                         reverse(extendedFingers, array);
-    //                     }
-    //                 }, 3000);
-    //             }
-    //         });
-    //     }
-    // }
-
-    // // 선택한 카드 뒤집기
-    // var fingersArr = [];
-
-    // function reverse(f, array) {
-    //     document.getElementById('card'+f+'').src = card[array[f]];
-    // }
+                            //console.log("extendedFingers : ", extendedFingers);
+                            controller.disconnect();
+                            selectNum(extendedFingers);
+                        }
+                    }, 3000);
+                }
+            })
+        }
+    }
 
 
 </script>
